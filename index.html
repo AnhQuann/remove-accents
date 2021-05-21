@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Remove accents</title>
+</head>
+
+<body>
+
+  <h1>Input: </h1>
+  <textarea  id="input" name="" id="" cols="30" rows="10"></textarea>
+  <br><br>
+  <button id="convert-btn">Convert</button>
+  <br>
+  <h1>Output: </h1>
+  <textarea id="output" name="" id="" cols="30" rows="10"></textarea>
+
+  <script>
+    const lowerCaseLatinize = (str) => {
+      const lowerCaseStr = str.toLowerCase();
+      const latinizeStr = latinize(lowerCaseStr);
+      return latinizeStr;
+    };
+
+    const stringToPath = (str) => {
+      const engString = lowerCaseLatinize(str);
+      return engString.replace(/[!@#$%^&*(),.?"“”:{}|<>]/g, "").replace(/ /g, "-");
+    };
+
+    const convertBtn = document.getElementById('convert-btn');
+    const input = document.getElementById('input');
+    const output = document.getElementById('output');
+
+    convertBtn.addEventListener('click', () => {
+      const inputContent = input.value;
+      output.innerText = stringToPath(inputContent);
+    });
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/latinize@0.5.0/latinize.min.js"></script>
+</body>
+
+</html>
