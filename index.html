@@ -5,18 +5,79 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    .container {
+      display: flex;
+    }
+
+    .ra,
+    .gs {
+      width: 50%;
+      padding: 16px;
+    }
+
+    #ra-input,
+    #ra-output,
+    #gs-input,
+    #gs-output,
+    #gs-iso {
+      width: 100%;
+    }
+
+    .btn {
+      cursor: pointer;
+      width: 240px;
+      height: 72px;
+      background-color: #fff;
+      border: 3px solid #000;
+      color: #000;
+      font-size: 24px;
+      transition: all 0.3s ease;
+    }
+
+    .btn:hover {
+      background-color: #000;
+      color: #fff;
+    }
+  </style>
   <title>Remove accents</title>
 </head>
 
 <body>
 
-  <h1>Input: </h1>
-  <textarea  id="input" name="" id="" cols="30" rows="10"></textarea>
-  <br><br>
-  <button id="convert-btn">Convert</button>
-  <br>
-  <h1>Output: </h1>
-  <textarea id="output" name="" id="" cols="30" rows="10"></textarea>
+  <div class="container">
+    <div class="ra">
+      <h1>Remove Accents</h1>
+      <h3>Input (string): </h3>
+      <textarea id="ra-input" name="" id="" cols="30" rows="10"></textarea>
+      <br><br>
+      <button class="btn" id="ra-btn">Remove</button>
+      <br>
+      <h3>Output (string): </h3>
+      <textarea id="ra-output" name="" id="" cols="30" rows="10"></textarea>
+    </div>
+    <div class="gs">
+      <h1>Generate Sitemap</h1>
+      <h3>Input (array): </h3>
+      <textarea id="gs-input" name="" id="" cols="30" rows="10"></textarea>
+      <h3>ISO Date: </h3>
+      <input id="gs-iso" />
+      <br><br>
+      <button class="btn" id="gs-btn-products">Sản phẩm</button>
+      <button class="btn" id="gs-btn-categories">Danh mục</button>
+      <button class="btn" id="gs-btn-blogs">Bài viết</button>
+      <br>
+      <h3>Output (xml): </h3>
+      <textarea id="gs-output" name="" id="" cols="30" rows="10"></textarea>
+    </div>
+  </div>
 
   <script>
     const lowerCaseLatinize = (str) => {
@@ -30,14 +91,81 @@
       return engString.replace(/[!@#$%^&*(),.?"“”:{}|<>]/g, "").replace(/ /g, "-");
     };
 
-    const convertBtn = document.getElementById('convert-btn');
-    const input = document.getElementById('input');
-    const output = document.getElementById('output');
+    // Remove Accents
+    const raBtn = document.getElementById('ra-btn');
+    const raInput = document.getElementById('ra-input');
+    const raOutput = document.getElementById('ra-output');
 
-    convertBtn.addEventListener('click', () => {
-      const inputContent = input.value;
-      output.innerText = stringToPath(inputContent);
+    raBtn.addEventListener('click', () => {
+      const inputContent = raInput.value;
+      raOutput.innerText = stringToPath(inputContent);
     });
+
+    // Generate Sitemap
+
+    const generateSitemap = (formatLink) => {
+      const gsInput = document.getElementById('gs-input');
+      const gsOutput = document.getElementById('gs-output');
+      const gsISO = document.getElementById('gs-iso');
+      const now = new Date();
+      let result = '';
+      const inputContent = gsInput.value;
+
+      try {
+        const rawItems = JSON.parse(JSON.parse(inputContent));
+        const isArray = Array.isArray(rawItems);
+        if (!isArray) {
+          gsOutput.innerText = 'Please make sure your input is in the correct format.';
+        } else {
+          for (let i = 0; i < rawItems.length; i++) {
+            const { name, id } = rawItems[i];
+            const siteMapItem = `
+              <url>
+                <loc>${formatLink.replace(/name/g, stringToPath(name)).replace(/id/g, id)}</loc>
+                <lastmod>${gsISO.value || now.toISOString()}</lastmod>
+              </url>
+            `;
+            result += siteMapItem.replace(/ /g, '');
+          }
+          gsOutput.innerText += result;
+        }
+      } catch (error) {
+        console.log(error);
+        gsOutput.innerText = 'Please make sure your input is in the correct format.';
+      }
+    };
+
+    const gsBtnProducts = document.getElementById('gs-btn-products');
+    const gsBtnCategories = document.getElementById('gs-btn-categories');
+    const gsBtnBlogs = document.getElementById('gs-btn-blogs');
+
+    gsBtnProducts.addEventListener('click', () => {
+      generateSitemap('https://www.xe2banh.com.vn/name.id.id.html');
+    });
+    gsBtnCategories.addEventListener('click', () => {
+      generateSitemap('https://www.xe2banh.com.vn/danh-muc/name.id.html');
+    });
+    gsBtnBlogs.addEventListener('click', () => {
+      generateSitemap('https://www.xe2banh.com.vn/name.id.html');
+    });
+
+    // const getStringifyData = (dataType) => {
+    //   const dataKeys = {
+    //     'san-pham': 'products',
+    //     'danh-muc': 'product-categories',
+    //     'bai-viet': 'posts'
+    //   };
+    //   const rows = document.getElementById(`table-${dataKeys[dataType]}`).querySelector('tbody').querySelectorAll('tr');
+    //   const result = [];
+    //   for (let i = 0; i < rows.length; i++) {
+    //     const id = rows[i].querySelector('.column-key-id').innerText;
+    //     const name = rows[i].querySelector('.column-key-name').innerText;
+    //     if (id && name) {
+    //       result.push({ id, name });
+    //     }
+    //   }
+    //   return JSON.stringify(result);
+    // };
   </script>
   <script src="https://cdn.jsdelivr.net/npm/latinize@0.5.0/latinize.min.js"></script>
 </body>
