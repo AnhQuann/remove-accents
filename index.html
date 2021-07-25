@@ -88,7 +88,7 @@
 
     const stringToPath = (str) => {
       const engString = lowerCaseLatinize(str);
-      return engString.replace(/[!@#$%^&*(),.?"“”:{}|<>]/g, "").replace(/ /g, "-");
+      return engString.replace(/[!@#$%^&*(),.?"“”:{}|<>]/g, "").replace(/ /g, "-").replace(/^\-+|\-+$/g, '');
     };
 
     // Remove Accents
