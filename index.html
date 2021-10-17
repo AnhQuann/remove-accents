@@ -112,7 +112,7 @@
       const inputContent = gsInput.value;
 
       try {
-        const rawItems = JSON.parse(JSON.parse(inputContent));
+        const rawItems = JSON.parse(inputContent);
         const isArray = Array.isArray(rawItems);
         if (!isArray) {
           gsOutput.innerText = 'Please make sure your input is in the correct format.';
